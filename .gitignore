@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Large files (models, data)
+models/
+data/
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
