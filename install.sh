@@ -59,6 +59,41 @@ for skill in "${SUB_SKILLS[@]}"; do
     fi
 done
 
+# Configure Knowledge Base Path
+echo ""
+echo -e "${BLUE}📂 Configuration${NC}"
+DEFAULT_PATH="$HOME/knowledge/arxiv"
+CONFIG_FILE="$HOME/.arxiv_researcher_config.json"
+
+if [ -f "$CONFIG_FILE" ]; then
+    CURRENT_PATH=$(grep -o '"arxiv_root": *"[^"]*"' "$CONFIG_FILE" | cut -d'"' -f4)
+    echo -e "Current knowledge base: ${GREEN}$CURRENT_PATH${NC}"
+    read -p "Keep this path? [Y/n] " KEEP
+    if [[ "$KEEP" =~ ^[Nn]$ ]]; then
+        SET_PATH=1
+    else
+        SET_PATH=0
+    fi
+else
+    SET_PATH=1
+fi
+
+if [ "$SET_PATH" -eq 1 ]; then
+    echo "Where do you want to store your papers and code?"
+    read -p "Path [default: ~/knowledge/arxiv]: " USER_PATH
+    USER_PATH=${USER_PATH:-"$DEFAULT_PATH"}
+
+    # Simple tilde expansion for the config file
+    if [[ "$USER_PATH" == ~* ]]; then
+        USER_PATH="${USER_PATH/#\~/$HOME}"
+    fi
+
+    echo "{\"arxiv_root\": \"$USER_PATH\"}" > "$CONFIG_FILE"
+    echo -e "${GREEN}✅ Configured knowledge base at: $USER_PATH${NC}"
+else
+    echo -e "${GREEN}✅ Keeping existing configuration.${NC}"
+fi
+
 # Make scripts executable
 chmod +x "$SKILLS_DIR/arxiv-researcher/scripts/"*.py 2>/dev/null || true
 

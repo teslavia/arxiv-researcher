@@ -8,8 +8,23 @@ from pathlib import Path
 from typing import Any
 
 # Configuration
-# TODO: Make this configurable via env var or config file
-ARXIV_ROOT = Path("/Volumes/TMAC/Satoshi/DEV/mac/knowledge/arxiv")
+CONFIG_FILE = Path.home() / ".arxiv_researcher_config.json"
+DEFAULT_ROOT = Path.home() / "knowledge" / "arxiv"
+
+
+def get_arxiv_root() -> Path:
+    """Get arXiv root directory from config or default."""
+    if CONFIG_FILE.exists():
+        try:
+            config = json.loads(CONFIG_FILE.read_text())
+            if "arxiv_root" in config:
+                return Path(config["arxiv_root"]).expanduser()
+        except (json.JSONDecodeError, IOError):
+            pass
+    return DEFAULT_ROOT
+
+
+ARXIV_ROOT = get_arxiv_root()
 CONTEXT_FILE = ARXIV_ROOT / ".context"
 
 def get_current_context() -> dict[str, Any] | None:

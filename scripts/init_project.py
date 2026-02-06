@@ -9,8 +9,11 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
+import sys
 
-ARXIV_ROOT = Path("/Volumes/TMAC/Satoshi/DEV/mac/knowledge/arxiv")
+# Add local directory to path to import utils
+sys.path.append(str(Path(__file__).parent))
+from utils import ARXIV_ROOT, CONTEXT_FILE, update_global_readme
 
 def fetch_paper_info(arxiv_id: str) -> dict:
     """Fetch paper metadata from arXiv API."""
@@ -241,29 +244,33 @@ def download_pdf(url: str, dest: Path) -> bool:
 
 def update_global_readme():
     """Update the global README.md index."""
+    # This logic is now in utils.py (or should be, but let's keep it here for now if not moved)
+    # Ideally, we should move update_global_readme to utils.py as well to avoid duplication
+    # For now, let's just make sure it uses the dynamic ARXIV_ROOT
     readme_path = ARXIV_ROOT / "README.md"
 
     # Scan all projects
     projects = []
-    for category_dir in sorted(ARXIV_ROOT.iterdir()):
-        if category_dir.is_dir() and not category_dir.name.startswith("."):
-            for project_dir in sorted(category_dir.iterdir()):
-                info_file = project_dir / "info.yaml"
-                if info_file.exists():
-                    # Simple parse for status
-                    content = info_file.read_text()
-                    status_match = re.search(r'status:\s*"?(\w+)"?', content)
-                    status = status_match.group(1) if status_match else "unknown"
-                    title_match = re.search(r'title:\s*"([^"]+)"', content)
-                    title = title_match.group(1)[:60] if title_match else project_dir.name
+    if ARXIV_ROOT.exists():
+        for category_dir in sorted(ARXIV_ROOT.iterdir()):
+            if category_dir.is_dir() and not category_dir.name.startswith("."):
+                for project_dir in sorted(category_dir.iterdir()):
+                    info_file = project_dir / "info.yaml"
+                    if info_file.exists():
+                        # Simple parse for status
+                        content = info_file.read_text()
+                        status_match = re.search(r'status:\s*"?(\w+)"?', content)
+                        status = status_match.group(1) if status_match else "unknown"
+                        title_match = re.search(r'title:\s*"([^"]+)"', content)
+                        title = title_match.group(1)[:60] if title_match else project_dir.name
 
-                    projects.append({
-                        "category": category_dir.name,
-                        "name": project_dir.name,
-                        "path": project_dir.relative_to(ARXIV_ROOT),
-                        "status": status,
-                        "title": title,
-                    })
+                        projects.append({
+                            "category": category_dir.name,
+                            "name": project_dir.name,
+                            "path": project_dir.relative_to(ARXIV_ROOT),
+                            "status": status,
+                            "title": title,
+                        })
 
     # Generate README
     status_emoji = {

@@ -12,8 +12,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-ARXIV_ROOT = Path("/Volumes/TMAC/Satoshi/DEV/mac/knowledge/arxiv")
-CONTEXT_FILE = ARXIV_ROOT / ".context"
+# Add local directory to path to import utils
+sys.path.append(str(Path(__file__).parent))
+from utils import ARXIV_ROOT, CONTEXT_FILE, find_project, update_status
 
 
 def get_current_context() -> dict | None:

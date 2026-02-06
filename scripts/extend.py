@@ -11,7 +11,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-ARXIV_ROOT = Path("/Volumes/TMAC/Satoshi/DEV/mac/knowledge/arxiv")
+# Add local directory to path to import utils
+sys.path.append(str(Path(__file__).parent))
+from utils import ARXIV_ROOT
+
 EXTENSIONS_DIR = ARXIV_ROOT / ".extensions"
 
 

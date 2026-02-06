@@ -32,7 +32,7 @@ cd arxiv-researcher
 
 ## 2. 基础设施配置
 
-- **实验室根目录**: `/Volumes/TMAC/Satoshi/DEV/mac/knowledge/arxiv/`
+- **实验室根目录**: 默认为 `~/knowledge/arxiv/` (可通过 `install.sh` 配置)
 - **上下文记忆**: `.context` (记录最后操作的论文 ID，支持省略参数)
 - **全局索引**: `README.md` (动态看板：按领域/状态分类)
 - **扩展目录**: `.extensions/` (自定义技能脚本库)

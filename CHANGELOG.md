@@ -15,9 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **New Templates**: `train` (Training Loop), `viz` (Visualization Hook), `benchmark` (Performance), `api` (FastAPI), `onnx` (Dynamic Export).
 - **Shared Utils**: Created `scripts/utils.py` to centralize context management and info parsing.
+- **Internationalization**: Added English (`README.en.md`) and Japanese (`README.ja.md`) documentation.
+- **Interactive Config**: `install.sh` now supports custom knowledge base paths via `~/.arxiv_researcher_config.json`.
+
+### Documentation
+- **Complete Overhaul**: Rewrote `README.md` with SOP visualization and clearer value proposition.
+- **Knowledge Base Guide**: Added detailed directory structure and "Local-First" features description.
 
 ### Changed
 - **Refactored Lab Script**: `scripts/lab.py` now uses a unified template-based generation logic.
+- **Dynamic Configuration**: Removed all hardcoded absolute paths from core scripts (`init`, `context`, `repro`, `extend`). All scripts now dynamically resolve the knowledge base location via `utils.py`.
 - **Improved Type Safety**: Updated all scripts to use Python 3.10+ type hints.
 - **Code Deduplication**: Removed redundant logic from `read.py` and `contrib.py`.
 
