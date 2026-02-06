@@ -1,12 +1,25 @@
-# arXiv Researcher
+<div align="center">
+  <h1>arXiv Researcher</h1>
+  <p>
+    <strong>Turn Papers into Code Assets</strong> — An AI-Native Agent for the complete research engineering lifecycle.
+  </p>
+</div>
 
-> **Turn Papers into Code Assets** — An AI-Native Agent for the complete research engineering lifecycle.
+<p align="center">
+  <img src="assets/media/demo.gif" alt="Demo" width="800">
+</p>
 
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://github.com/anthropics/claude-code)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+<div align="center">
+  <p>
+    <a href="https://github.com/anthropics/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-Skill-blue" alt="Claude Code Skill"></a>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python 3.10+"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
+  </p>
 
-[中文](README.md) | [English](README_EN.md)
+  <p>
+    [ <a href="README.md">中文</a> | <a href="README.en.md">English</a> | <a href="README.ja.md">日本語</a> ]
+  </p>
+</div>
 
 ## 🚀 The Problem
 

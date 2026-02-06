@@ -31,3 +31,15 @@ data/
 *.pth
 *.onnx
 *.safetensors
+
+# Node.js (for promo-video etc)
+node_modules/
+npm-debug.log
+
+# Promo & Marketing Assets (unrelated to core logic)
+assets/media/promo-*/
+*.mp4
+*.mov
+*.gif
+!assets/media/demo.gif
+

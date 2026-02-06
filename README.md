@@ -1,12 +1,25 @@
-# arXiv Researcher
+<div align="center">
+  <h1>arXiv Researcher</h1>
+  <p>
+    <strong>将论文转化为工程资产</strong> — Claude Code 原生科研助手，打造从阅读到落地的完整闭环。
+  </p>
+</div>
 
-> **将论文转化为工程资产** — Claude Code 原生科研助手，打造从阅读到落地的完整闭环。
+<p align="center">
+  <img src="assets/media/demo.gif" alt="Demo" width="800">
+</p>
 
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://github.com/anthropics/claude-code)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+<div align="center">
+  <p>
+    <a href="https://github.com/anthropics/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-Skill-blue" alt="Claude Code Skill"></a>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python 3.10+"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
+  </p>
 
-[中文](README.md) | [English](README.en.md) | [日本語](README.ja.md)
+  <p>
+    [ <a href="README.md">中文</a> | <a href="README.en.md">English</a> | <a href="README.ja.md">日本語</a> ]
+  </p>
+</div>
 
 ## 🚀 痛点与解决方案
 

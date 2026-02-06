@@ -11,7 +11,7 @@ sys.path.append(str(Path(__file__).parent))
 from utils import find_project
 
 SKILL_DIR = Path(__file__).parent.parent
-ASSETS_DIR = SKILL_DIR / "assets"
+ASSETS_DIR = SKILL_DIR / "assets" / "templates"
 
 # Templates for different script types
 TEMPLATES = {
