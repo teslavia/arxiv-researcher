@@ -107,13 +107,20 @@ AI 辅助阅读，自动生成结构化笔记：
 
 ### 🛠️ 工程化实验室 (`/arxiv-lab`)
 
-将学术代码转化为生产级代码：
+**AI-Native 工程流**: 即使是全新架构的论文，也能快速工程化。
+
+1.  **生成骨架**: `/arxiv-lab` 提供符合最佳实践的 Python/PyTorch 脚手架。
+2.  **AI 填充**: 利用 Claude 理解论文上下文的能力，填充具体逻辑。
+
+支持模版：
 
 ```bash
-/arxiv-lab demo      # 最小可运行示例
-/arxiv-lab api       # FastAPI 服务封装
-/arxiv-lab onnx      # ONNX 导出脚本
-/arxiv-lab benchmark # 性能基准测试
+/arxiv-lab demo      # 通用推理骨架
+/arxiv-lab train     # 训练循环 (Dataset/Loader/Loop)
+/arxiv-lab viz       # 模型内部可视化 (Hooks)
+/arxiv-lab api       # FastAPI 微服务骨架
+/arxiv-lab onnx      # ONNX 导出与量化
+/arxiv-lab benchmark # 延迟与吞吐量压测
 ```
 
 ### 🌟 开源贡献生成器 (`/arxiv-contrib`)
@@ -241,8 +248,14 @@ arxiv-researcher/
 │   ├── repro.py           # 复现工具
 │   ├── lab.py             # 工程实验
 │   ├── contrib.py         # 贡献生成
+│   ├── utils.py           # 共享工具类
 │   └── extend.py          # 扩展系统
-├── assets/                # 模板资源
+├── assets/                # 通用工程模板
+│   ├── api_template.py
+│   ├── onnx_export_template.py
+│   ├── benchmark_template.py
+│   ├── train_demo_template.py
+│   ├── viz_attention_template.py
 │   ├── inference_demo_template.py
 │   ├── ISSUE_TEMPLATE.md
 │   └── PR_TEMPLATE.md

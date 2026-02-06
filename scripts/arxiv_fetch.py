@@ -3,12 +3,10 @@
 
 import argparse
 import json
-import re
 import subprocess
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
-from typing import Optional
 
 ARXIV_API = "http://export.arxiv.org/api/query"
 
@@ -31,17 +29,22 @@ def search_arxiv(query: str, max_results: int = 10) -> list[dict]:
 
     results = []
     for entry in root.findall("atom:entry", ns):
-        arxiv_id = entry.find("atom:id", ns).text.split("/abs/")[-1]
-        title = entry.find("atom:title", ns).text.strip().replace("\n", " ")
-        summary = entry.find("atom:summary", ns).text.strip()[:300]
-        published = entry.find("atom:published", ns).text[:10]
+        id_element = entry.find("atom:id", ns)
+        title_element = entry.find("atom:title", ns)
+        summary_element = entry.find("atom:summary", ns)
+        published_element = entry.find("atom:published", ns)
+
+        arxiv_id = id_element.text.split("/abs/")[-1] if id_element is not None and id_element.text else "unknown"
+        title = title_element.text.strip().replace("\n", " ") if title_element is not None and title_element.text else "No Title"
+        summary = summary_element.text.strip()[:300] if summary_element is not None and summary_element.text else ""
+        published = published_element.text[:10] if published_element is not None and published_element.text else ""
 
         # Extract categories
         categories = [c.get("term") for c in entry.findall("atom:category", ns)]
-        primary_cat = categories[0] if categories else "unknown"
+        primary_cat = categories[0] if categories and categories[0] else "unknown"
 
         # Check for code links
-        links = [l.get("href") for l in entry.findall("atom:link", ns)]
+        # links = [l.get("href") for l in entry.findall("atom:link", ns)]
 
         results.append({
             "id": arxiv_id,
@@ -55,7 +58,7 @@ def search_arxiv(query: str, max_results: int = 10) -> list[dict]:
 
     return results
 
-def get_github_stars(repo: str) -> Optional[int]:
+def get_github_stars(repo: str) -> int | None:
     """Get GitHub stars using gh CLI."""
     try:
         result = subprocess.run(
@@ -68,7 +71,7 @@ def get_github_stars(repo: str) -> Optional[int]:
         pass
     return None
 
-def search_github_for_paper(arxiv_id: str, title: str) -> Optional[dict]:
+def search_github_for_paper(arxiv_id: str, title: str) -> dict | None:
     """Search GitHub for paper implementation."""
     try:
         # Search by arXiv ID first

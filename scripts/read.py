@@ -2,68 +2,12 @@
 """Read paper and generate SUMMARY.md for arxiv papers."""
 
 import argparse
-import json
-import re
 import sys
 from pathlib import Path
 
-ARXIV_ROOT = Path("/Volumes/TMAC/Satoshi/DEV/mac/knowledge/arxiv")
-CONTEXT_FILE = ARXIV_ROOT / ".context"
-
-
-def get_current_context() -> dict | None:
-    """Get current paper context."""
-    if CONTEXT_FILE.exists():
-        try:
-            return json.loads(CONTEXT_FILE.read_text())
-        except (json.JSONDecodeError, IOError):
-            pass
-    return None
-
-
-def find_project(arxiv_id: str | None) -> Path | None:
-    """Find project directory."""
-    if arxiv_id is None:
-        ctx = get_current_context()
-        if ctx:
-            return Path(ctx["path"])
-        return None
-
-    for category_dir in ARXIV_ROOT.iterdir():
-        if category_dir.is_dir() and not category_dir.name.startswith("."):
-            for project_dir in category_dir.iterdir():
-                if project_dir.name.startswith(arxiv_id):
-                    return project_dir
-    return None
-
-
-def update_status(project_dir: Path, status: str) -> None:
-    """Update project status in info.yaml."""
-    info_file = project_dir / "info.yaml"
-    if info_file.exists():
-        content = info_file.read_text()
-        content = re.sub(r'status:\s*"?\w+"?', f'status: "{status}"', content)
-        info_file.write_text(content)
-
-
-def get_paper_info(project_dir: Path) -> dict:
-    """Extract paper info from info.yaml."""
-    info_file = project_dir / "info.yaml"
-    info = {"title": "", "id": "", "authors": []}
-
-    if info_file.exists():
-        content = info_file.read_text()
-
-        title_match = re.search(r'title:\s*"([^"]+)"', content)
-        if title_match:
-            info["title"] = title_match.group(1)
-
-        id_match = re.search(r'id:\s*"([^"]+)"', content)
-        if id_match:
-            info["id"] = id_match.group(1)
-
-    return info
-
+# Add local directory to path to import utils
+sys.path.append(str(Path(__file__).parent))
+from utils import find_project, load_info, update_status
 
 def main():
     parser = argparse.ArgumentParser(description="Read paper and prepare SUMMARY.md")
@@ -79,7 +23,7 @@ def main():
 
     print(f"📁 Project: {project_dir.name}")
 
-    paper_info = get_paper_info(project_dir)
+    paper_info = load_info(project_dir)
     pdf_path = project_dir / "paper.pdf"
     summary_path = project_dir / "SUMMARY.md"
 

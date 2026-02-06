@@ -3,65 +3,15 @@
 
 import argparse
 import json
-import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
-ARXIV_ROOT = Path("/Volumes/TMAC/Satoshi/DEV/mac/knowledge/arxiv")
-CONTEXT_FILE = ARXIV_ROOT / ".context"
+# Add local directory to path to import utils
+sys.path.append(str(Path(__file__).parent))
+from utils import find_project, load_info
+
 SKILL_DIR = Path(__file__).parent.parent
-
-
-def get_current_context() -> dict | None:
-    """Get current paper context."""
-    if CONTEXT_FILE.exists():
-        try:
-            return json.loads(CONTEXT_FILE.read_text())
-        except (json.JSONDecodeError, IOError):
-            pass
-    return None
-
-
-def find_project(arxiv_id: str | None) -> Path | None:
-    """Find project directory."""
-    if arxiv_id is None:
-        ctx = get_current_context()
-        if ctx:
-            return Path(ctx["path"])
-        return None
-
-    for category_dir in ARXIV_ROOT.iterdir():
-        if category_dir.is_dir() and not category_dir.name.startswith("."):
-            for project_dir in category_dir.iterdir():
-                if project_dir.name.startswith(arxiv_id):
-                    return project_dir
-    return None
-
-
-def parse_info_yaml(project_dir: Path) -> dict:
-    """Parse info.yaml for paper metadata."""
-    info_file = project_dir / "info.yaml"
-    if not info_file.exists():
-        return {}
-
-    content = info_file.read_text()
-    info = {}
-
-    # Simple regex parsing
-    patterns = {
-        "id": r'id:\s*"([^"]+)"',
-        "title": r'title:\s*"([^"]+)"',
-        "github_repo": r'github_repo:\s*"([^"]+)"',
-        "abs_url": r'abs_url:\s*"([^"]+)"',
-    }
-
-    for key, pattern in patterns.items():
-        match = re.search(pattern, content)
-        if match:
-            info[key] = match.group(1)
-
-    return info
 
 
 def generate_issue(project_dir: Path, info: dict) -> Path:
@@ -271,7 +221,7 @@ def main():
 
     print(f"📁 Project: {project_dir.name}")
 
-    info = parse_info_yaml(project_dir)
+    info = load_info(project_dir)
     generated = []
 
     if args.type in ["issue", "all"]:
