@@ -29,13 +29,15 @@ Thank you for your interest in contributing to arXiv Researcher!
 
 ### Skill Development
 
-When adding new skills:
+Current architecture uses a consolidated skill + unified CLI.
 
-1. Create a new directory under `skills/`
-2. Add `SKILL.md` with proper trigger phrases
-3. Add corresponding script in `scripts/`
-4. Update main `SKILL.md` to include the new sub-skill
-5. Update `README.md` with usage examples
+When adding new capabilities:
+
+1. Add or update pipeline code under `arxiv_engine/pipelines/`
+2. Wire the command in `arxiv_engine/cli.py` (`@cli.command()`)
+3. Update `skills/arxiv-cli/SKILL.md` command docs
+4. Update root `SKILL.md` and `README.md` examples
+5. Run local sanity checks (`python3 -m compileall arxiv_engine`)
 
 ### Commit Message Convention
 

@@ -1,8 +1,7 @@
 <div align="center">
   <h1>arXiv Researcher</h1>
-  <p>
-    <strong>将论文转化为工程资产</strong> — Claude Code 原生科研助手，打造从阅读到落地的完整闭环。
-  </p>
+  <p><strong>将论文转化为工程资产（Code as Asset）</strong></p>
+  <p>统一 CLI + 本地知识库 + 可复现实验脚手架</p>
 </div>
 
 <p align="center">
@@ -10,38 +9,25 @@
 </p>
 
 <div align="center">
-  <p>
-    <a href="https://github.com/anthropics/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-Skill-blue" alt="Claude Code Skill"></a>
-    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python 3.10+"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
-  </p>
-
-  <p>
-    [ <a href="README.md">中文</a> | <a href="README.en.md">English</a> | <a href="README.ja.md">日本語</a> ]
-  </p>
+  <a href="https://github.com/anthropics/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-Skill-blue" alt="Claude Code Skill"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python 3.10+"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
 </div>
 
-## 🚀 痛点与解决方案
+> 单文件多语言文档：中文主文档 + English/Japanese quick guide。
+> Claude Code 统一入口：`/arxiv-cli`
 
-作为工程师，你可能经历过：
-- 📄 **收藏癖**: 收藏了 100 篇 PDF，真正读完的不到 10 篇。
-- 🔧 **复现难**: 环境配不对、代码跑不通、依赖冲突。
-- 🚫 **落地难**: 学术代码难以直接用于生产环境。
-- 🗂️ **知识碎片**: 笔记散落各处，回顾困难。
+## What Changed (Recent Refactor)
 
-**arXiv Researcher** 提供标准化的 **SOP (标准作业程序)**：
+- 标准 Python 包结构：核心代码迁移到 `arxiv_engine/`。
+- 统一命令入口：采用 Click 聚合为 `arxiv <subcommand>`。
+- 技能收拢：`skills/` 仅保留 `skills/arxiv-cli/`。
+- 安装方式统一：`install.sh` 使用 `python3 -m pip install -e .`。
+- 依赖文件收拢：`requirements*.txt` 合并为单一 `requirements.txt`。
 
-```mermaid
-graph LR
-    A[🔍 发现] --> B[📖 阅读]
-    B --> C[🔬 复现]
-    C --> D[🛠️ 工程化]
-    D --> E[🌟 贡献]
-```
+## Quick Start
 
-## ⚡️ 30 秒快速开始
-
-### 1. 安装
+### 1) 安装
 
 ```bash
 git clone https://github.com/teslavia/arxiv-researcher.git
@@ -49,129 +35,226 @@ cd arxiv-researcher
 ./install.sh
 ```
 
-### 2. 使用
-
-重启 Claude Code 后即可使用：
+如果遇到系统 Python 的 PEP 668 限制，请使用虚拟环境：
 
 ```bash
-# 1. 搜索论文 (自动标注 GitHub Stars ⭐)
-/arxiv-search "speculative decoding"
-
-# 2. 初始化项目 (下载 PDF，建立目录)
-/arxiv-init 2401.12345
-
-# 3. 深度阅读 (生成结构化笔记)
-/arxiv-read
-
-# 4. 一键复现 (Clone 代码，分析依赖)
-/arxiv-repro
-
-# 5. 工程化实验 (生成 API/ONNX/训练骨架)
-/arxiv-lab api
-
-# 6. 开源贡献 (生成 Issue/PR/技术博客)
-/arxiv-contrib blog
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -e .
 ```
 
-## 🌟 核心功能
+可选增强依赖：
 
-### 🔍 智能搜索 (`/arxiv-search`)
-不只是搜索，更是**筛选**。
-- 自动抓取 GitHub Stars，快速判断影响力。
-- 优先展示包含代码实现的论文。
-- 过滤无关结果，直达核心。
+```bash
+pip install -r requirements.txt
+```
 
-### 📁 标准化项目空间 (`/arxiv-init`)
-每篇论文都是一个独立的**工程项目**。
-- `paper.pdf`: 原始论文。
-- `src/`: 官方代码实现 (gitignored)。
-- `playground/`: 你的实验与魔改代码。
-- `SUMMARY.md`: 结构化知识库。
+### 2) 查看统一命令
 
-### 📚 沉淀式知识库 (Knowledge Base)
-**拒绝"收藏夹吃灰"，打造你的第二大脑。**
+```bash
+arxiv --help
+```
 
-- **自定义存储**: 安装时可选择知识库路径 (默认 `~/knowledge/arxiv`)，数据完全掌控。
-- **本地优先**: 所有 PDF、代码、笔记存储在本地，无需联网即可访问。
-- **AI 就绪**: 结构化的笔记天然适合作为 RAG (检索增强生成) 的语料。
-- **上下文持久化**: `/arxiv-context` 瞬间恢复"科研现场"。
+### 3) Claude Code 最新使用方式
 
-#### 🗃️ 目录结构 (Directory Structure)
+在 Claude Code 中，统一 slash 指令为：`/arxiv-cli`
+
+推荐写法：
 
 ```text
-~/knowledge/arxiv/             # 根目录 (可配置)
-├── README.md                  # 全局看板
-├── .context                   # 状态文件
-├── cs.CL/                     # arXiv 类别
-│   └── 2401.12345_title/      # 论文项目
-│       ├── info.yaml          # 元数据
-│       ├── paper.pdf          # 论文原件
-│       ├── SUMMARY.md         # 深度笔记
-│       ├── REPRODUCTION.md    # 复现日志
-│       ├── src/               # 官方源码
-│       └── playground/        # 实验代码
-└── ...
+/arxiv-cli 搜索最近 7 天 speculative decoding 且有代码的论文
+/arxiv-cli 初始化 2401.12345 并切换为当前上下文
+/arxiv-cli 复现当前论文并给出依赖安装建议
 ```
 
-### 📖 深度阅读 (`/arxiv-read`)
-AI 辅助阅读，提取关键信息：
-- **Context**: 解决什么核心问题？
-- **Method**: 架构与创新点。
-- **Results**: 关键指标对比。
-- **Open Questions**: 潜在的改进方向。
+如果你希望固定为命令执行，也可以这样写：
 
-### 🛠️ 工程化实验室 (`/arxiv-lab`)
-**打通学术代码与生产环境的最后一公里。**
-生成通用的深度学习脚手架，让 Claude 结合论文上下文自动填充逻辑。
+```text
+/arxiv-cli 执行: arxiv daily "speculative decoding" --days 7 --code-only
+```
 
-| 类型 | 描述 | 适用场景 |
-|------|------|----------|
-| `demo` | 通用推理骨架 | 快速验证模型效果 |
-| `api` | FastAPI 微服务 | 生产环境部署 |
-| `train`| PyTorch 训练循环 | 复现训练过程 |
-| `onnx` | ONNX 导出工具 | 模型量化与加速 |
-| `viz` | 可视化 Hook | 解释模型注意力/特征 |
+说明：`/arxiv-*` 分散指令为历史写法，统一入口已切换到 `/arxiv-cli`；底层执行仍是 `arxiv <subcommand>`。
 
-### 🌟 开源贡献生成器 (`/arxiv-contrib`)
-将你的复现经验转化为社区贡献。
-- **Issue**: 自动生成包含环境信息的复现失败报告。
-- **PR**: 提交 Bug 修复或新功能。
-- **Blog**: 一键生成技术博客，分享复现心得。
+## Core Commands (Terminal)
 
-## 📂 项目结构
+### 发现与筛选
+
+```bash
+arxiv search --search "speculative decoding" --max 10
+arxiv fetch --search "speculative decoding" --max 10   # search 的兼容别名
+arxiv daily "LLM inference" --days 7 --max 15 --code-only
+```
+
+### 初始化与上下文
+
+```bash
+arxiv init 2401.12345
+arxiv context
+arxiv context 2401.12345
+arxiv context --clear
+```
+
+### 阅读与知识沉淀
+
+```bash
+arxiv read
+arxiv read --status
+arxiv read --mark-learned
+
+arxiv brain index
+arxiv brain ask "What is the core contribution?" --top-k 5
+```
+
+### 复现与工程化
+
+```bash
+arxiv repro --repo owner/repo
+arxiv lab list
+arxiv lab all
+arxiv deploy --target coreml
+arxiv dataset --output playground/dataset_sft.jsonl
+arxiv fix "python playground/inference_demo.py"
+```
+
+### 扩展与贡献
+
+```bash
+arxiv extend list
+arxiv extend create podcast -i "生成论文播客脚本"
+
+arxiv contrib issue
+arxiv contrib pr
+arxiv contrib blog
+arxiv contrib all --json
+```
+
+## Recommended Workflow
+
+```text
+search/daily -> init -> read -> repro -> lab/deploy/dataset -> contrib
+```
+
+## Project Layout
 
 ```text
 arxiv-researcher/
-├── assets/                # 通用工程模板 (Scaffolds)
-│   ├── api_template.py    # FastAPI 骨架
-│   ├── train_template.py  # 训练循环骨架
-│   └── ...
-├── scripts/               # 核心 Python 脚本
-│   ├── arxiv_fetch.py     # 搜索与元数据
-│   ├── lab.py             # 工程化实验逻辑
-│   └── ...
-├── skills/                # Claude Code 技能定义
-│   ├── arxiv-search/
-│   └── ...
-└── knowledge/             # (运行时生成) 你的本地论文库
+├── arxiv_engine/
+│   ├── cli.py                 # 统一 CLI 入口（Click）
+│   ├── core/
+│   │   └── utils.py           # 共享工具
+│   └── pipelines/             # 各业务流水线
+│       ├── search.py
+│       ├── init_project.py
+│       ├── read.py
+│       ├── repro.py
+│       └── ...
+├── assets/templates/          # 实验/部署模板
+├── skills/arxiv-cli/SKILL.md  # 单一超级技能文档
+├── requirements.txt           # 统一依赖
+├── setup.py                   # console_scripts: arxiv
+└── install.sh                 # 安装技能 + pip install -e .
 ```
 
-## 🧩 扩展系统
+## Command Migration (Old -> New)
 
-用自然语言定义你的专属工作流：
+| 旧指令 | 新命令 |
+|---|---|
+| `/arxiv-search <query>` | `arxiv search --search "<query>"` |
+| `/arxiv-daily <topic>` | `arxiv daily "<topic>"` |
+| `/arxiv-init <id>` | `arxiv init <id>` |
+| `/arxiv-context [id]` | `arxiv context [id]` |
+| `/arxiv-read` | `arxiv read` |
+| `/arxiv-repro` | `arxiv repro` |
+| `/arxiv-lab <type>` | `arxiv lab <type>` |
+| `/arxiv-deploy ...` | `arxiv deploy ...` |
+| `/arxiv-contrib ...` | `arxiv contrib ...` |
+| `/arxiv-extend ...` | `arxiv extend ...` |
+
+Claude Code 统一入口：
+
+- 推荐：`/arxiv-cli <你的目标或任务>`
+- 需要精确控制时：`/arxiv-cli 执行: arxiv <subcommand> ...`
+
+Claude Code 场景建议：
+
+- 新对话优先使用 `/arxiv-cli`。
+- 仅在历史会话或旧模板中使用 `/arxiv-*` 兼容写法。
+
+## Troubleshooting
+
+- `arxiv: command not found`：确认已执行 `python3 -m pip install -e .`。
+- 无当前论文上下文：先执行 `arxiv init <id>` 或 `arxiv context <id>`。
+- `brain` 回退 hash embedding：安装 `requirements.txt` 中相关依赖（`sentence-transformers`）。
+- 查看子命令帮助：`arxiv <subcommand> --help`。
+
+---
+
+## English Quick Guide
+
+### Install
 
 ```bash
-# 创建播客脚本生成器
-/arxiv-extend create podcast -i "生成 5 分钟播客脚本，讨论论文优缺点"
-
-# 创建 Notion 导入格式
-/arxiv-extend create notion -i "格式化为 Notion 数据库导入格式"
+git clone https://github.com/teslavia/arxiv-researcher.git
+cd arxiv-researcher
+./install.sh
 ```
 
-## 🤝 贡献
+### Main CLI
 
-欢迎提交 PR！详情请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
+```bash
+arxiv --help
+arxiv search --search "speculative decoding" --max 10
+arxiv init 2401.12345
+arxiv read
+arxiv repro
+arxiv lab api
+arxiv deploy --target coreml
+arxiv contrib blog
+```
 
-## 📄 License
+### Key Updates
 
-MIT License
+- Unified package under `arxiv_engine/`
+- Single CLI router: `arxiv <subcommand>`
+- Consolidated skill: `skills/arxiv-cli/`
+- Single dependency file: `requirements.txt`
+
+---
+
+## 日本語クイックガイド
+
+### インストール
+
+```bash
+git clone https://github.com/teslavia/arxiv-researcher.git
+cd arxiv-researcher
+./install.sh
+```
+
+### 主要コマンド
+
+```bash
+arxiv --help
+arxiv search --search "speculative decoding" --max 10
+arxiv init 2401.12345
+arxiv read
+arxiv repro
+arxiv lab api
+arxiv deploy --target coreml
+arxiv contrib blog
+```
+
+### 直近の変更
+
+- `arxiv_engine/` へのパッケージ再編
+- `arxiv <subcommand>` の統一 CLI
+- `skills/arxiv-cli/` へのスキル統合
+- 依存関係を `requirements.txt` に一本化
+
+## Contributing
+
+PR welcome. See `CONTRIBUTING.md`.
+
+## License
+
+MIT

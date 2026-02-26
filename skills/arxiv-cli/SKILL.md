@@ -5,6 +5,30 @@ description: 统一 arXiv CLI 技能。通过 `arxiv <subcommand>` 完成搜索�
 
 # arxiv CLI Super Skill
 
+## 统一调用入口
+
+在 Claude Code 中，请使用：
+
+```text
+/arxiv-cli <任务描述>
+```
+
+示例：
+
+```text
+/arxiv-cli 搜索最近 7 天 speculative decoding 且有代码的论文
+/arxiv-cli 初始化 2401.12345 并设为当前上下文
+/arxiv-cli 基于当前论文生成复现计划
+```
+
+底层会路由到 `arxiv <subcommand>` 执行。
+
+## Claude Code 使用建议（最新版）
+
+- 优先自然语言描述目标，让 Agent 选择合适的 `arxiv` 子命令执行。
+- 需要可复现步骤时，明确写出完整命令：`arxiv <subcommand> ...`。
+- 旧 `/arxiv-*` 分散指令仅作迁移兼容，不作为主路径。
+
 ## 定位
 
 本技能是 arXiv Researcher 的统一入口。所有能力都通过同一个命令暴露：

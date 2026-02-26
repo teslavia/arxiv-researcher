@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="arxiv-engine",
-    version="0.1.0",
+    version="0.2.0",
     description="CLI toolkit for arXiv paper research workflows",
     packages=find_packages(include=["arxiv_engine", "arxiv_engine.*"]),
     include_package_data=True,
