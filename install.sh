@@ -1,116 +1,37 @@
 #!/bin/bash
 
-# arXiv Researcher - One-Click Installation Script
-# Installs the main skill and all sub-skills to ~/.claude/skills/
+set -euo pipefail
 
-set -e
-
-# Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_DIR="$HOME/.claude/skills"
+SOURCE_SKILL_DIR="$SCRIPT_DIR/skills/arxiv-cli"
+TARGET_SKILL_DIR="$SKILLS_DIR/arxiv-cli"
 
-echo -e "${BLUE}🚀 Installing arXiv Researcher Skills...${NC}"
-echo ""
+echo "Installing arxiv-cli skill and arxiv command..."
 
-# Create skills directory if it doesn't exist
 mkdir -p "$SKILLS_DIR"
 
-# Function to install a skill
-install_skill() {
-    local name=$1
-    local source=$2
-    local target="$SKILLS_DIR/$name"
-
-    if [ -d "$target" ]; then
-        rm -rf "$target"
-    fi
-
-    cp -r "$source" "$target"
-    echo -e "${GREEN}✅ Installed $name${NC}"
-}
-
-# Install main skill (with scripts/ and assets/)
-install_skill "arxiv-researcher" "$SCRIPT_DIR"
-
-# Install sub-skills
-SUB_SKILLS=(
-    "arxiv-search"
-    "arxiv-init"
-    "arxiv-daily"
-    "arxiv-context"
-    "arxiv-read"
-    "arxiv-repro"
-    "arxiv-lab"
-    "arxiv-contrib"
-    "arxiv-extend"
-)
-
-for skill in "${SUB_SKILLS[@]}"; do
-    if [ -d "$SCRIPT_DIR/skills/$skill" ]; then
-        install_skill "$skill" "$SCRIPT_DIR/skills/$skill"
-    else
-        echo -e "${RED}⚠️  Warning: $skill not found in skills/${NC}"
-    fi
-done
-
-# Configure Knowledge Base Path
-echo ""
-echo -e "${BLUE}📂 Configuration${NC}"
-DEFAULT_PATH="$HOME/knowledge/arxiv"
-CONFIG_FILE="$HOME/.arxiv_researcher_config.json"
-
-if [ -f "$CONFIG_FILE" ]; then
-    CURRENT_PATH=$(grep -o '"arxiv_root": *"[^"]*"' "$CONFIG_FILE" | cut -d'"' -f4)
-    echo -e "Current knowledge base: ${GREEN}$CURRENT_PATH${NC}"
-    read -p "Keep this path? [Y/n] " KEEP
-    if [[ "$KEEP" =~ ^[Nn]$ ]]; then
-        SET_PATH=1
-    else
-        SET_PATH=0
-    fi
+if [ -d "$SOURCE_SKILL_DIR" ]; then
+    rm -rf "$TARGET_SKILL_DIR"
+    cp -R "$SOURCE_SKILL_DIR" "$TARGET_SKILL_DIR"
+    echo "Installed skill: $TARGET_SKILL_DIR"
 else
-    SET_PATH=1
+    echo "Warning: $SOURCE_SKILL_DIR not found."
 fi
 
-if [ "$SET_PATH" -eq 1 ]; then
-    echo "Where do you want to store your papers and code?"
-    read -p "Path [default: ~/knowledge/arxiv]: " USER_PATH
-    USER_PATH=${USER_PATH:-"$DEFAULT_PATH"}
-
-    # Simple tilde expansion for the config file
-    if [[ "$USER_PATH" == ~* ]]; then
-        USER_PATH="${USER_PATH/#\~/$HOME}"
-    fi
-
-    echo "{\"arxiv_root\": \"$USER_PATH\"}" > "$CONFIG_FILE"
-    echo -e "${GREEN}✅ Configured knowledge base at: $USER_PATH${NC}"
-else
-    echo -e "${GREEN}✅ Keeping existing configuration.${NC}"
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "Error: python3 is required." >&2
+    exit 1
 fi
 
-# Make scripts executable
-chmod +x "$SKILLS_DIR/arxiv-researcher/scripts/"*.py 2>/dev/null || true
+echo "Running: python3 -m pip install -e ."
+if ! python3 -m pip install -e "$SCRIPT_DIR"; then
+    echo "Editable install failed." >&2
+    echo "Tip: use a virtual environment, then retry:" >&2
+    echo "  python3 -m venv .venv" >&2
+    echo "  source .venv/bin/activate" >&2
+    echo "  python3 -m pip install -e ." >&2
+    exit 1
+fi
 
-echo ""
-echo -e "${GREEN}🎉 All 10 arXiv skills installed!${NC}"
-echo ""
-echo "Installed to: $SKILLS_DIR"
-echo ""
-echo "Skills installed:"
-echo "  - arxiv-researcher (main skill)"
-for skill in "${SUB_SKILLS[@]}"; do
-    echo "  - $skill"
-done
-echo ""
-echo -e "${BLUE}📌 Restart Claude Code to use the new commands.${NC}"
-echo ""
-echo "Quick start:"
-echo "  /arxiv-search speculative decoding"
-echo "  /arxiv-init 2401.12345"
-echo "  /arxiv-read"
+echo "Done. You can now run: arxiv --help"

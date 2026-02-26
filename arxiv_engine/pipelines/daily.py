@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Fetch daily arXiv papers for a topic.
+"""Fetch daily arXiv papers for a topic."""
 
-Provides a daily digest of new papers with GitHub code availability.
-"""
+from __future__ import annotations
 
 import argparse
 import json
@@ -17,13 +16,12 @@ ARXIV_API = "http://export.arxiv.org/api/query"
 
 def fetch_recent_papers(topic: str, days: int = 7, max_results: int = 20) -> list[dict]:
     """Fetch recent papers from arXiv."""
-    # arXiv API doesn't support date filtering directly, so we fetch more and filter
     params = urllib.parse.urlencode({
         "search_query": f"all:{topic}",
         "start": 0,
-        "max_results": max_results * 2,  # Fetch extra to filter
+        "max_results": max_results * 2,
         "sortBy": "submittedDate",
-        "sortOrder": "descending"
+        "sortOrder": "descending",
     })
     url = f"{ARXIV_API}?{params}"
 
@@ -68,7 +66,7 @@ def check_github(arxiv_id: str) -> dict | None:
     try:
         result = subprocess.run(
             ["gh", "search", "repos", arxiv_id, "--json", "fullName,stargazersCount", "--limit", "1"],
-            capture_output=True, text=True, timeout=10
+            capture_output=True, text=True, timeout=10,
         )
         if result.returncode == 0 and result.stdout.strip():
             repos = json.loads(result.stdout)
@@ -79,7 +77,7 @@ def check_github(arxiv_id: str) -> dict | None:
     return None
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Daily arXiv digest")
     parser.add_argument("topic", help="Topic to search (e.g., 'LLM inference')")
     parser.add_argument("--days", "-d", type=int, default=7, help="Days to look back")
@@ -92,14 +90,12 @@ def main():
 
     papers = fetch_recent_papers(args.topic, args.days, args.max)
 
-    # Enrich with GitHub info
     for p in papers:
         gh = check_github(p["id"])
         if gh:
             p["github"] = gh["repo"]
             p["stars"] = gh["stars"]
 
-    # Filter if needed
     if args.code_only:
         papers = [p for p in papers if "github" in p]
 
@@ -111,15 +107,11 @@ def main():
         print("No papers found matching criteria.")
         return
 
-    # Group by date
-    by_date = {}
+    by_date: dict[str, list[dict]] = {}
     for p in papers:
-        date = p["published"]
-        if date not in by_date:
-            by_date[date] = []
-        by_date[date].append(p)
+        by_date.setdefault(p["published"], []).append(p)
 
-    for date in sorted(by_date.keys(), reverse=True):
+    for date in sorted(by_date, reverse=True):
         print(f"### {date}")
         for p in by_date[date]:
             code = f"⭐{p['stars']} {p['github']}" if "github" in p else "❌ No code"

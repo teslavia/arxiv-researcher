@@ -8,11 +8,21 @@ __pycache__/
 *$py.class
 *.so
 .Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .env
 .venv
 env/
 venv/
 ENV/
+
+# Packaging artifacts
+build/
+dist/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
 
 # IDE
 .idea/
@@ -42,4 +52,3 @@ assets/media/promo-*/
 *.mov
 *.gif
 !assets/media/demo.gif
-

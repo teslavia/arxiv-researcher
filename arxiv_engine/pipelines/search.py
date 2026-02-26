@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """arXiv search with GitHub enrichment."""
 
+from __future__ import annotations
+
 import argparse
 import json
 import subprocess
@@ -10,6 +12,7 @@ import xml.etree.ElementTree as ET
 
 ARXIV_API = "http://export.arxiv.org/api/query"
 
+
 def search_arxiv(query: str, max_results: int = 10) -> list[dict]:
     """Search arXiv API and return parsed results."""
     params = urllib.parse.urlencode({
@@ -17,7 +20,7 @@ def search_arxiv(query: str, max_results: int = 10) -> list[dict]:
         "start": 0,
         "max_results": max_results,
         "sortBy": "relevance",
-        "sortOrder": "descending"
+        "sortOrder": "descending",
     })
     url = f"{ARXIV_API}?{params}"
 
@@ -39,12 +42,8 @@ def search_arxiv(query: str, max_results: int = 10) -> list[dict]:
         summary = summary_element.text.strip()[:300] if summary_element is not None and summary_element.text else ""
         published = published_element.text[:10] if published_element is not None and published_element.text else ""
 
-        # Extract categories
         categories = [c.get("term") for c in entry.findall("atom:category", ns)]
         primary_cat = categories[0] if categories and categories[0] else "unknown"
-
-        # Check for code links
-        # links = [l.get("href") for l in entry.findall("atom:link", ns)]
 
         results.append({
             "id": arxiv_id,
@@ -58,27 +57,13 @@ def search_arxiv(query: str, max_results: int = 10) -> list[dict]:
 
     return results
 
-def get_github_stars(repo: str) -> int | None:
-    """Get GitHub stars using gh CLI."""
-    try:
-        result = subprocess.run(
-            ["gh", "api", f"repos/{repo}", "--jq", ".stargazers_count"],
-            capture_output=True, text=True, timeout=10
-        )
-        if result.returncode == 0:
-            return int(result.stdout.strip())
-    except Exception:
-        pass
-    return None
 
 def search_github_for_paper(arxiv_id: str, title: str) -> dict | None:
     """Search GitHub for paper implementation."""
     try:
-        # Search by arXiv ID first
-        query = urllib.parse.quote(f"{arxiv_id} OR {title[:50]}")
         result = subprocess.run(
             ["gh", "search", "repos", arxiv_id, "--json", "fullName,stargazersCount", "--limit", "3"],
-            capture_output=True, text=True, timeout=15
+            capture_output=True, text=True, timeout=15,
         )
         if result.returncode == 0 and result.stdout.strip():
             repos = json.loads(result.stdout)
@@ -89,7 +74,8 @@ def search_github_for_paper(arxiv_id: str, title: str) -> dict | None:
         pass
     return None
 
-def main():
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Search arXiv papers")
     parser.add_argument("--search", "-s", required=True, help="Search query")
     parser.add_argument("--max", "-m", type=int, default=10, help="Max results")
@@ -98,7 +84,6 @@ def main():
 
     results = search_arxiv(args.search, args.max)
 
-    # Enrich with GitHub info
     for r in results:
         gh = search_github_for_paper(r["id"], r["title"])
         if gh:
@@ -115,6 +100,7 @@ def main():
             print(f"   🔗 {r['abs_url']}")
             if "github" in r:
                 print(f"   💻 https://github.com/{r['github']}")
+
 
 if __name__ == "__main__":
     main()

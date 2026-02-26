@@ -15,7 +15,7 @@ description: |
 git clone https://github.com/your-repo/arxiv-researcher.git
 cd arxiv-researcher
 
-# 一键安装（主技能 + 9 个子技能）
+# 一键安装（主技能 + 11 个子技能）
 ./install.sh
 
 # 重启 Claude Code 即可使用
@@ -23,12 +23,12 @@ cd arxiv-researcher
 
 安装后可用的指令：
 - `/arxiv-search` `/arxiv-daily` `/arxiv-init` `/arxiv-context`
-- `/arxiv-read` `/arxiv-repro` `/arxiv-lab` `/arxiv-contrib` `/arxiv-extend`
+- `/arxiv-read` `/arxiv-brain` `/arxiv-repro` `/arxiv-lab` `/arxiv-deploy` `/arxiv-contrib` `/arxiv-extend`
 
 ## 1. 核心定义
 
 全生命周期科研辅助 Agent，打造**"工程师的个人科研闭环"**。
-强制执行 `Discovery` → `Learning` → `Verification` → `Engineering` → `Contribution` 的标准作业程序 (SOP)，将零散的 PDF 阅读转化为可复用的代码资产和开源影响力。
+强制执行 `Discovery` → `Learning` → `Verification` → `Engineering` → `Scale` → `Contribution` 的标准作业程序 (SOP)，将零散的 PDF 阅读转化为可复用的代码资产和开源影响力。
 
 ## 2. 基础设施配置
 
@@ -83,8 +83,10 @@ cd arxiv-researcher
 | 指令 | 脚本/操作 | 用途 |
 |------|-----------|------|
 | `/arxiv-read` | 读取 PDF，更新 SUMMARY.md | 深度阅读，生成结构化笔记 |
+| `/arxiv-brain` | `scripts/brain.py` | 本地语义检索（索引 SUMMARY/info/playground） |
 | `/arxiv-repro` | `scripts/repro.py` | Clone 代码，分析依赖，生成 env_setup.sh |
 | `/arxiv-lab` | 在 playground/ 创建脚本 | 实验、API 封装、ONNX 导出 |
+| `/arxiv-deploy` | `scripts/deploy.py` | 生成端侧部署脚手架 (CoreML/TRT/RKNN) |
 | `/arxiv-contrib` | `scripts/contrib.py` | 生成 Issue/PR/Blog 模板 |
 
 ### 扩展系统
@@ -181,10 +183,23 @@ huggingface-cli download <model_id> --local-dir models/
 - 创建 `api.py` - 封装为标准 Python Class 或 FastAPI 服务
 - **代码清洗**: 移除硬编码路径，添加 Type Hint，格式化 (Black/Ruff)
 - **导出优化**: 尝试 ONNX/TensorRT 导出，评估端侧部署可行性
+- **端侧部署**: 使用 `/arxiv-deploy` 生成 CoreML/TRT/RKNN 脚手架
 
 更新 info.yaml 状态为 `optimized`。
 
-### 阶段五：开源贡献 (Contribution)
+### 阶段五：规模化 (Scale)
+
+**目标**: 解决多卡扩展与显存瓶颈，建立性能基线。
+
+```bash
+# 多卡分布式训练脚手架
+/arxiv-lab scale
+
+# 显存/算力剖析脚手架
+/arxiv-lab profile
+```
+
+### 阶段六：开源贡献 (Contribution)
 
 **目标**: 建立个人技术影响力。
 
